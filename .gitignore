@@ -1,0 +1,6 @@
+*.user
+*.suo
+*.vskdb
+*.vsksln
+*\debug
+*\release
