@@ -176,7 +176,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="alice.ico" />
-    <Content Include="alice4.ico" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">

@@ -23,6 +23,7 @@ namespace alice
       public string m_benchSolutionPathAbs;
       public string m_managerExecutablePathAbs;
       public string m_simExecutablePathAbs;
+      public string m_managerOnlySimExecutablePathAbs;
       public string m_benchExecutablePathAbs;
     };
 
@@ -74,7 +75,23 @@ namespace alice
         m_solutions.Clear();
 
         //-- Source path exists?
-        m_sourcePathAbs = sourceFolderTxt.Text;
+        m_sourcePathAbs = Environment.GetEnvironmentVariable( "TTDEVPATH" );
+
+        if( m_sourcePathAbs == null )
+        {
+          m_sourcePathAbs = @"c:\dev\main\source\";
+        }
+        else
+        {
+          if( m_sourcePathAbs[ m_sourcePathAbs.Length - 1 ] != '\\' )
+          {
+            m_sourcePathAbs += '\\';
+          }
+
+          m_sourcePathAbs += "source\\";
+        }
+
+        sourceFolderTxt.Text = m_sourcePathAbs;
 
         if( Directory.Exists( m_sourcePathAbs ) == false )
         {
@@ -121,9 +138,13 @@ namespace alice
             fileInfo = new FileInfo( info.m_simSolutionPathAbs );
             info.m_simExecutablePathAbs = fileInfo.DirectoryName + "\\PRJ_BUILD_PROFILE_SIM\\" + e.Attributes[ "simFilename" ].Value;
 
+            fileInfo = new FileInfo( info.m_managerSolutionPathAbs );
+            info.m_managerOnlySimExecutablePathAbs = fileInfo.DirectoryName + "\\PRJ_BUILD_PROFILE_MANAGER\\" + e.Attributes[ "simFilename" ].Value;
+
             fileInfo = new FileInfo( info.m_benchSolutionPathAbs );
             info.m_benchExecutablePathAbs = fileInfo.DirectoryName + "\\PRJ_BUILD_PROFILE_BENCH\\" + e.Attributes[ "benchFilename" ].Value;
 
+            // Add to collection.
             m_solutions.Add( info.m_name, info );
           }
         }
@@ -257,6 +278,9 @@ namespace alice
           return false;
         }
 
+        string simExecPath =
+          uiManagerOnly.Checked ? info.m_managerOnlySimExecutablePathAbs : info.m_simExecutablePathAbs;
+
         // Profiles
         TemplateCommonValueCollectionEntry newProfile = new TemplateCommonValueCollectionEntry();
         newProfile.Description = "Default";
@@ -311,14 +335,17 @@ namespace alice
         m_newProject.Template.AddEntry( newShortcut );
 
         // Build Manager & Sim shortcut
-        newShortcut = new TemplateShortcutEntry();
-        newShortcut.Description = "Build Manager & Sim";
-        newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.UiGroupName = "Build";
-        newShortcut.LinkedShortcuts.Add( "Build Manager (PRJ_BUILD_PROFILE_MANAGER)" );
-        newShortcut.LinkedShortcuts.Add( "Build Sim (PRJ_BUILD_PROFILE_SIM)" );
+        if( uiManagerOnly.Checked == false )
+        {
+          newShortcut = new TemplateShortcutEntry();
+          newShortcut.Description = "Build Manager & Sim";
+          newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
+          newShortcut.UiGroupName = "Build";
+          newShortcut.LinkedShortcuts.Add( "Build Manager (PRJ_BUILD_PROFILE_MANAGER)" );
+          newShortcut.LinkedShortcuts.Add( "Build Sim (PRJ_BUILD_PROFILE_SIM)" );
 
-        m_newProject.Template.AddEntry( newShortcut );
+          m_newProject.Template.AddEntry( newShortcut );
+        }
 
         // Build Manager shortcut
         newShortcut = new TemplateShortcutEntry();
@@ -345,28 +372,31 @@ namespace alice
         m_newProject.Template.AddEntry( newShortcut );
 
         // Build Sim shortcut
-        newShortcut = new TemplateShortcutEntry();
-        newShortcut.Description = "Build Sim (PRJ_BUILD_PROFILE_SIM)";
-        newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.Filename = "ALICE_APP_PATH\\res\\compile.bat";
-        newShortcut.UiGroupName = "Build";
+        if( uiManagerOnly.Checked == false )
+        {
+          newShortcut = new TemplateShortcutEntry();
+          newShortcut.Description = "Build Sim (PRJ_BUILD_PROFILE_SIM)";
+          newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
+          newShortcut.Filename = "ALICE_APP_PATH\\res\\compile.bat";
+          newShortcut.UiGroupName = "Build";
 
-        newShortcut.EnvironmentVars.Add( "COMPILE_DESCRIPTION", info.m_name + ": Sim Solution" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_DESCRIPTION", true );
-        newShortcut.EnvironmentVars.Add( "COMPILE_PROFILE", "PRJ_BUILD_PROFILE_SIM" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_PROFILE", true );
-        newShortcut.EnvironmentVars.Add( "COMPILE_PLATFORM", "PRJ_BUILD_PLATFORM_SIM" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_PLATFORM", true );
-        newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
-        newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
-        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
-        newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_simSolutionPathAbs );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
-        newShortcut.EnvironmentVars.Add( "COMPILE_OUTPUT", "ALICE_SIM_BUILD_OUTPUT" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_OUTPUT", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_DESCRIPTION", info.m_name + ": Sim Solution" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_DESCRIPTION", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_PROFILE", "PRJ_BUILD_PROFILE_SIM" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_PROFILE", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_PLATFORM", "PRJ_BUILD_PLATFORM_SIM" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_PLATFORM", true );
+          newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
+          newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
+          newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_simSolutionPathAbs );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_OUTPUT", "ALICE_SIM_BUILD_OUTPUT" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_OUTPUT", true );
 
-        m_newProject.Template.AddEntry( newShortcut );
+          m_newProject.Template.AddEntry( newShortcut );
+        }
 
         // Build Bench shortcut
         newShortcut = new TemplateShortcutEntry();
@@ -416,27 +446,30 @@ namespace alice
         m_newProject.Template.AddEntry( newShortcut );
 
         // Clean Sim shortcut
-        newShortcut = new TemplateShortcutEntry();
-        newShortcut.Description = "Clean Sim (PRJ_BUILD_PROFILE_SIM)";
-        newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.Filename = "ALICE_APP_PATH\\res\\clean.bat";
-        newShortcut.UiGroupName = "Clean";
-        newShortcut.ConfirmBeforeRunning = true;
+        if( uiManagerOnly.Checked == false )
+        {
+          newShortcut = new TemplateShortcutEntry();
+          newShortcut.Description = "Clean Sim (PRJ_BUILD_PROFILE_SIM)";
+          newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
+          newShortcut.Filename = "ALICE_APP_PATH\\res\\clean.bat";
+          newShortcut.UiGroupName = "Clean";
+          newShortcut.ConfirmBeforeRunning = true;
 
-        newShortcut.EnvironmentVars.Add( "COMPILE_DESCRIPTION", info.m_name + ": Sim Solution" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_DESCRIPTION", true );
-        newShortcut.EnvironmentVars.Add( "COMPILE_PROFILE", "PRJ_BUILD_PROFILE_SIM" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_PROFILE", true );
-        newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
-        newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
-        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
-        newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_simSolutionPathAbs );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
-        newShortcut.EnvironmentVars.Add( "COMPILE_OUTPUT", "ALICE_SIM_BUILD_OUTPUT" );
-        newShortcut.EnvironmentVarStates.Add( "COMPILE_OUTPUT", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_DESCRIPTION", info.m_name + ": Sim Solution" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_DESCRIPTION", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_PROFILE", "PRJ_BUILD_PROFILE_SIM" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_PROFILE", true );
+          newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
+          newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
+          newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_simSolutionPathAbs );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
+          newShortcut.EnvironmentVars.Add( "COMPILE_OUTPUT", "ALICE_SIM_BUILD_OUTPUT" );
+          newShortcut.EnvironmentVarStates.Add( "COMPILE_OUTPUT", true );
 
-        m_newProject.Template.AddEntry( newShortcut );
+          m_newProject.Template.AddEntry( newShortcut );
+        }
 
         // Clean Bench shortcut
         newShortcut = new TemplateShortcutEntry();
@@ -502,7 +535,7 @@ namespace alice
         newShortcut = new TemplateShortcutEntry();
         newShortcut.Description = "Run Dynamics";
         newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.Filename = info.m_simExecutablePathAbs;
+        newShortcut.Filename = simExecPath;
         newShortcut.UiGroupName = "Run";
 
         newShortcut.Arguments.Add( "-networkname", "Dynamics" );
@@ -531,7 +564,7 @@ namespace alice
         newShortcut = new TemplateShortcutEntry();
         newShortcut.Description = "Run Centre View";
         newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.Filename = info.m_simExecutablePathAbs;
+        newShortcut.Filename = simExecPath;
         newShortcut.UiGroupName = "Run";
 
         newShortcut.Arguments.Add( "-networkname", "CentreView" );
@@ -560,7 +593,7 @@ namespace alice
         newShortcut = new TemplateShortcutEntry();
         newShortcut.Description = "Run Left View";
         newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.Filename = info.m_simExecutablePathAbs;
+        newShortcut.Filename = simExecPath;
         newShortcut.UiGroupName = "Run";
 
         newShortcut.Arguments.Add( "-networkname", "LeftView" );
@@ -589,7 +622,7 @@ namespace alice
         newShortcut = new TemplateShortcutEntry();
         newShortcut.Description = "Run Right View";
         newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.Filename = info.m_simExecutablePathAbs;
+        newShortcut.Filename = simExecPath;
         newShortcut.UiGroupName = "Run";
 
         newShortcut.Arguments.Add( "-networkname", "RightView" );
@@ -618,7 +651,7 @@ namespace alice
         newShortcut = new TemplateShortcutEntry();
         newShortcut.Description = "Run Aux";
         newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.Filename = info.m_simExecutablePathAbs;
+        newShortcut.Filename = simExecPath;
         newShortcut.UiGroupName = "Run";
 
         newShortcut.Arguments.Add( "-networkname", "Aux" );
@@ -681,15 +714,18 @@ namespace alice
         m_newProject.Template.AddEntry( newShortcut );
 
         // Shortcut: Sim folder
-        newShortcut = new TemplateShortcutEntry();
-        newShortcut.Description = "Sim folder";
-        newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
-        newShortcut.UiGroupName = "Shortcuts";
+        if( uiManagerOnly.Checked == false )
+        {
+          newShortcut = new TemplateShortcutEntry();
+          newShortcut.Description = "Sim folder";
+          newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
+          newShortcut.UiGroupName = "Shortcuts";
 
-        FileInfo simSolution = new FileInfo( info.m_simSolutionPathAbs );
-        newShortcut.Filename = simSolution.DirectoryName + "\\PRJ_BUILD_PROFILE_SIM";
+          FileInfo simSolution = new FileInfo( info.m_simSolutionPathAbs );
+          newShortcut.Filename = simSolution.DirectoryName + "\\PRJ_BUILD_PROFILE_SIM";
 
-        m_newProject.Template.AddEntry( newShortcut );
+          m_newProject.Template.AddEntry( newShortcut );
+        }
 
         // Shortcut: Bench folder
         newShortcut = new TemplateShortcutEntry();
@@ -972,6 +1008,13 @@ namespace alice
       {
         ErrorMsg( ex.Message );
       }
+    }
+
+    //-------------------------------------------------------------------------
+
+    private void uiManagerOnly_CheckedChanged( object sender, EventArgs e )
+    {
+      dfltManagerBuildCbo.Text = uiManagerOnly.Checked ? "FastDebug" : "Release";
     }
 
     //-------------------------------------------------------------------------
