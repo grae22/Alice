@@ -75,23 +75,30 @@ namespace alice
         m_solutions.Clear();
 
         //-- Source path exists?
-        m_sourcePathAbs = Environment.GetEnvironmentVariable( "TTDEVPATH" );
-
-        if( m_sourcePathAbs == null )
+        if( sourceFolderTxt.Text.Length == 0 )
         {
-          m_sourcePathAbs = @"c:\dev\main\source\";
+          m_sourcePathAbs = Environment.GetEnvironmentVariable( "TTDEVPATH" );
+
+          if( m_sourcePathAbs == null )
+          {
+            m_sourcePathAbs = @"c:\dev\main\source\";
+          }
+          else
+          {
+            if( m_sourcePathAbs[ m_sourcePathAbs.Length - 1 ] != '\\' )
+            {
+              m_sourcePathAbs += '\\';
+            }
+
+            m_sourcePathAbs += "source\\";
+          }
+
+          sourceFolderTxt.Text = m_sourcePathAbs;
         }
         else
         {
-          if( m_sourcePathAbs[ m_sourcePathAbs.Length - 1 ] != '\\' )
-          {
-            m_sourcePathAbs += '\\';
-          }
-
-          m_sourcePathAbs += "source\\";
+          m_sourcePathAbs = sourceFolderTxt.Text;
         }
-
-        sourceFolderTxt.Text = m_sourcePathAbs;
 
         if( Directory.Exists( m_sourcePathAbs ) == false )
         {

@@ -165,7 +165,6 @@
       this.sourceFolderTxt.Name = "sourceFolderTxt";
       this.sourceFolderTxt.Size = new System.Drawing.Size(142, 20);
       this.sourceFolderTxt.TabIndex = 35;
-      this.sourceFolderTxt.Text = "C:\\dev\\main\\source\\";
       this.sourceFolderTxt.Validating += new System.ComponentModel.CancelEventHandler(this.sourceFolderTxt_Validating);
       // 
       // label11
