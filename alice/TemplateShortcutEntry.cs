@@ -174,6 +174,11 @@ namespace alice
 
         foreach( string key in m_environmentVars.Keys )
         {
+          if( EnvironmentVarStates[ key ] == false )
+          {
+            continue;
+          }
+
           string value;
           if( m_environmentVars.TryGetValue( key, out value ) )
           {
