@@ -711,6 +711,16 @@ namespace alice
 
         // Shortcut: Manager folder
         newShortcut = new TemplateShortcutEntry();
+        newShortcut.Description = "VisualStudio";
+        newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
+        newShortcut.UiGroupName = "Shortcuts";
+
+        newShortcut.Filename = "ALICE_VS_DEVENV";
+
+        m_newProject.Template.AddEntry( newShortcut );
+
+        // Shortcut: Manager folder
+        newShortcut = new TemplateShortcutEntry();
         newShortcut.Description = "Manager folder";
         newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
         newShortcut.UiGroupName = "Shortcuts";
