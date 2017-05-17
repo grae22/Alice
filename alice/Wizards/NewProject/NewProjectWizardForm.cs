@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Xml;
 using System.IO;
+using System.Linq;
 
 namespace alice
 {
@@ -171,6 +172,46 @@ namespace alice
       {
         solutionCbo.Items.Add( info.m_name );
       }
+      
+      //-- VisualStudio devenv versions.
+      IEnumerable<KeyValuePair<string, string>> visualStudioValues =
+        Program.g_projectManager.CommonValues.Where(
+          x => x.Key.ToLower().Contains( "alice_vs_devenv_" ) );
+
+      foreach( var vs in visualStudioValues )
+      {
+        // We don't want the old key which doesn't include the vs version.
+        if( vs.Key != "ALICE_VS_DEVENV" )
+        {
+          uiVisualStudioVersion.Items.Add( vs.Key );
+        }
+      }
+
+      //-- VisualStudio bin path versions.
+      visualStudioValues =
+        Program.g_projectManager.CommonValues.Where(
+          x => x.Key.ToLower().Contains( "alice_vs_bin_" ) );
+
+      foreach( var vs in visualStudioValues )
+      {
+        // We don't want the old key which doesn't include the vs version.
+        if( vs.Key != "ALICE_VS_VC_BIN" )
+        {
+          uiVisualStudioBinPath.Items.Add( vs.Key );
+        }
+      }
+
+      //-- Select the latest VS version.
+      if( uiVisualStudioVersion.Items.Count > 0 )
+      {
+        uiVisualStudioVersion.SelectedIndex = uiVisualStudioVersion.Items.Count - 1;
+      }
+      else
+      {
+        ErrorMsg(
+          "No VisualStudio devenv versions found in the common-values! " +
+          "Features requiring VisualStudio (e.g. 'build' shortcuts) will not work." );
+      }
     }
 
     //-------------------------------------------------------------------------
@@ -288,6 +329,8 @@ namespace alice
         string simExecPath =
           uiManagerOnly.Checked ? info.m_managerOnlySimExecutablePathAbs : info.m_simExecutablePathAbs;
 
+        string vsDevenv = uiVisualStudioVersion.Text;
+
         // Profiles
         TemplateCommonValueCollectionEntry newProfile = new TemplateCommonValueCollectionEntry();
         newProfile.Description = "Default";
@@ -369,7 +412,7 @@ namespace alice
         newShortcut.EnvironmentVarStates.Add( "COMPILE_PLATFORM", true );
         newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
         newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
-        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
+        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", vsDevenv );
         newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
         newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_managerSolutionPathAbs );
         newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
@@ -395,7 +438,7 @@ namespace alice
           newShortcut.EnvironmentVarStates.Add( "COMPILE_PLATFORM", true );
           newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
           newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
-          newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
+          newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", vsDevenv );
           newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
           newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_simSolutionPathAbs );
           newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
@@ -420,7 +463,7 @@ namespace alice
         newShortcut.EnvironmentVarStates.Add( "COMPILE_PLATFORM", true );
         newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
         newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
-        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
+        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", vsDevenv );
         newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
         newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_benchSolutionPathAbs );
         newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
@@ -443,7 +486,7 @@ namespace alice
         newShortcut.EnvironmentVarStates.Add( "COMPILE_PROFILE", true );
         newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
         newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
-        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
+        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", vsDevenv );
         newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
         newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_managerSolutionPathAbs );
         newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
@@ -468,7 +511,7 @@ namespace alice
           newShortcut.EnvironmentVarStates.Add( "COMPILE_PROFILE", true );
           newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
           newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
-          newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
+          newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", vsDevenv );
           newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
           newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_simSolutionPathAbs );
           newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
@@ -492,7 +535,7 @@ namespace alice
         newShortcut.EnvironmentVarStates.Add( "COMPILE_PROFILE", true );
         newShortcut.EnvironmentVars.Add( "VS_VC_BIN_PATH", "ALICE_VS_VC_BIN" );
         newShortcut.EnvironmentVarStates.Add( "VS_VC_BIN_PATH", true );
-        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", "ALICE_VS_DEVENV" );
+        newShortcut.EnvironmentVars.Add( "COMPILER_FULL_FILENAME", vsDevenv );
         newShortcut.EnvironmentVarStates.Add( "COMPILER_FULL_FILENAME", true );
         newShortcut.EnvironmentVars.Add( "COMPILE_SOLUTION", info.m_benchSolutionPathAbs );
         newShortcut.EnvironmentVarStates.Add( "COMPILE_SOLUTION", true );
@@ -715,7 +758,7 @@ namespace alice
         newShortcut.Type = TemplateEntry.EntryType.Type_Shortcut;
         newShortcut.UiGroupName = "Shortcuts";
 
-        newShortcut.Filename = "ALICE_VS_DEVENV";
+        newShortcut.Filename = vsDevenv;
 
         m_newProject.Template.AddEntry( newShortcut );
 
@@ -1032,6 +1075,42 @@ namespace alice
     private void uiManagerOnly_CheckedChanged( object sender, EventArgs e )
     {
       dfltManagerBuildCbo.Text = uiManagerOnly.Checked ? "FastDebug" : "Release";
+    }
+
+    //-------------------------------------------------------------------------
+
+    private void uiVisualStudioVersion_SelectedIndexChanged( object sender, EventArgs e )
+    {
+      try
+      {
+        // Use the last 4 chars (should be the vs ver year) to select the correct
+        // bin path.
+        string year =
+          uiVisualStudioVersion.Text.Substring(
+            uiVisualStudioVersion.Text.Length - 4,
+            4 );
+
+        bool foundBinPath = false;
+
+        foreach( string s in uiVisualStudioBinPath.Items )
+        {
+          if( s.Contains( year ) )
+          {
+            uiVisualStudioBinPath.Text = s;
+            foundBinPath = true;
+            break;
+          }
+        }
+
+        if( foundBinPath == false )
+        {
+          ErrorMsg( "Failed to find corresponding VisualStudio bin path." );
+        }
+      }
+      catch( Exception ex )
+      {
+        ErrorMsg( ex.Message );
+      }
     }
 
     //-------------------------------------------------------------------------

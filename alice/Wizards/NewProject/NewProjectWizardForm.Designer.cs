@@ -31,6 +31,9 @@
       this.cancelBtn = new System.Windows.Forms.Button();
       this.okBtn = new System.Windows.Forms.Button();
       this.groupBox1 = new System.Windows.Forms.GroupBox();
+      this.uiVisualStudioBinPath = new System.Windows.Forms.ComboBox();
+      this.uiVisualStudioVersion = new System.Windows.Forms.ComboBox();
+      this.label16 = new System.Windows.Forms.Label();
       this.uiManagerOnly = new System.Windows.Forms.CheckBox();
       this.label15 = new System.Windows.Forms.Label();
       this.sourceFolderTxt = new System.Windows.Forms.TextBox();
@@ -74,8 +77,9 @@
       // 
       // cancelBtn
       // 
+      this.cancelBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
       this.cancelBtn.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-      this.cancelBtn.Location = new System.Drawing.Point(514, 501);
+      this.cancelBtn.Location = new System.Drawing.Point(514, 542);
       this.cancelBtn.Name = "cancelBtn";
       this.cancelBtn.Size = new System.Drawing.Size(63, 24);
       this.cancelBtn.TabIndex = 6;
@@ -84,7 +88,8 @@
       // 
       // okBtn
       // 
-      this.okBtn.Location = new System.Drawing.Point(401, 501);
+      this.okBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+      this.okBtn.Location = new System.Drawing.Point(401, 542);
       this.okBtn.Name = "okBtn";
       this.okBtn.Size = new System.Drawing.Size(107, 24);
       this.okBtn.TabIndex = 5;
@@ -94,6 +99,9 @@
       // 
       // groupBox1
       // 
+      this.groupBox1.Controls.Add(this.uiVisualStudioBinPath);
+      this.groupBox1.Controls.Add(this.uiVisualStudioVersion);
+      this.groupBox1.Controls.Add(this.label16);
       this.groupBox1.Controls.Add(this.uiManagerOnly);
       this.groupBox1.Controls.Add(this.label15);
       this.groupBox1.Controls.Add(this.sourceFolderTxt);
@@ -134,9 +142,39 @@
       this.groupBox1.Controls.Add(this.label1);
       this.groupBox1.Location = new System.Drawing.Point(6, 6);
       this.groupBox1.Name = "groupBox1";
-      this.groupBox1.Size = new System.Drawing.Size(571, 480);
+      this.groupBox1.Size = new System.Drawing.Size(571, 521);
       this.groupBox1.TabIndex = 7;
       this.groupBox1.TabStop = false;
+      // 
+      // uiVisualStudioBinPath
+      // 
+      this.uiVisualStudioBinPath.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.uiVisualStudioBinPath.FormattingEnabled = true;
+      this.uiVisualStudioBinPath.Location = new System.Drawing.Point(373, 349);
+      this.uiVisualStudioBinPath.Name = "uiVisualStudioBinPath";
+      this.uiVisualStudioBinPath.Size = new System.Drawing.Size(185, 21);
+      this.uiVisualStudioBinPath.Sorted = true;
+      this.uiVisualStudioBinPath.TabIndex = 32;
+      // 
+      // uiVisualStudioVersion
+      // 
+      this.uiVisualStudioVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+      this.uiVisualStudioVersion.FormattingEnabled = true;
+      this.uiVisualStudioVersion.Location = new System.Drawing.Point(169, 349);
+      this.uiVisualStudioVersion.Name = "uiVisualStudioVersion";
+      this.uiVisualStudioVersion.Size = new System.Drawing.Size(185, 21);
+      this.uiVisualStudioVersion.Sorted = true;
+      this.uiVisualStudioVersion.TabIndex = 31;
+      this.uiVisualStudioVersion.SelectedIndexChanged += new System.EventHandler(this.uiVisualStudioVersion_SelectedIndexChanged);
+      // 
+      // label16
+      // 
+      this.label16.AutoSize = true;
+      this.label16.Location = new System.Drawing.Point(18, 352);
+      this.label16.Name = "label16";
+      this.label16.Size = new System.Drawing.Size(105, 13);
+      this.label16.TabIndex = 38;
+      this.label16.Text = "VisualStudio version:";
       // 
       // uiManagerOnly
       // 
@@ -179,7 +217,7 @@
       // worldSpecLbl
       // 
       this.worldSpecLbl.AutoEllipsis = true;
-      this.worldSpecLbl.Location = new System.Drawing.Point(108, 446);
+      this.worldSpecLbl.Location = new System.Drawing.Point(108, 481);
       this.worldSpecLbl.Name = "worldSpecLbl";
       this.worldSpecLbl.Size = new System.Drawing.Size(416, 13);
       this.worldSpecLbl.TabIndex = 33;
@@ -188,10 +226,10 @@
       // worldSpecBrowse
       // 
       this.worldSpecBrowse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.worldSpecBrowse.Location = new System.Drawing.Point(530, 440);
+      this.worldSpecBrowse.Location = new System.Drawing.Point(530, 475);
       this.worldSpecBrowse.Name = "worldSpecBrowse";
       this.worldSpecBrowse.Size = new System.Drawing.Size(28, 24);
-      this.worldSpecBrowse.TabIndex = 32;
+      this.worldSpecBrowse.TabIndex = 36;
       this.worldSpecBrowse.Text = "...";
       this.worldSpecBrowse.UseVisualStyleBackColor = true;
       this.worldSpecBrowse.Click += new System.EventHandler(this.worldSpecBrowse_Click);
@@ -199,7 +237,7 @@
       // label14
       // 
       this.label14.AutoSize = true;
-      this.label14.Location = new System.Drawing.Point(18, 446);
+      this.label14.Location = new System.Drawing.Point(18, 481);
       this.label14.Name = "label14";
       this.label14.Size = new System.Drawing.Size(85, 13);
       this.label14.TabIndex = 31;
@@ -244,7 +282,7 @@
       // specLbl
       // 
       this.specLbl.AutoEllipsis = true;
-      this.specLbl.Location = new System.Drawing.Point(108, 416);
+      this.specLbl.Location = new System.Drawing.Point(108, 451);
       this.specLbl.Name = "specLbl";
       this.specLbl.Size = new System.Drawing.Size(416, 13);
       this.specLbl.TabIndex = 27;
@@ -253,10 +291,10 @@
       // specBrowse
       // 
       this.specBrowse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.specBrowse.Location = new System.Drawing.Point(530, 410);
+      this.specBrowse.Location = new System.Drawing.Point(530, 445);
       this.specBrowse.Name = "specBrowse";
       this.specBrowse.Size = new System.Drawing.Size(28, 24);
-      this.specBrowse.TabIndex = 26;
+      this.specBrowse.TabIndex = 35;
       this.specBrowse.Text = "...";
       this.specBrowse.UseVisualStyleBackColor = true;
       this.specBrowse.Click += new System.EventHandler(this.specBrowse_Click);
@@ -264,7 +302,7 @@
       // label13
       // 
       this.label13.AutoSize = true;
-      this.label13.Location = new System.Drawing.Point(18, 416);
+      this.label13.Location = new System.Drawing.Point(18, 451);
       this.label13.Name = "label13";
       this.label13.Size = new System.Drawing.Size(56, 13);
       this.label13.TabIndex = 25;
@@ -273,7 +311,7 @@
       // worldFolderLbl
       // 
       this.worldFolderLbl.AutoEllipsis = true;
-      this.worldFolderLbl.Location = new System.Drawing.Point(108, 386);
+      this.worldFolderLbl.Location = new System.Drawing.Point(108, 421);
       this.worldFolderLbl.Name = "worldFolderLbl";
       this.worldFolderLbl.Size = new System.Drawing.Size(416, 13);
       this.worldFolderLbl.TabIndex = 24;
@@ -282,10 +320,10 @@
       // worldFolderBrowse
       // 
       this.worldFolderBrowse.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.worldFolderBrowse.Location = new System.Drawing.Point(530, 380);
+      this.worldFolderBrowse.Location = new System.Drawing.Point(530, 415);
       this.worldFolderBrowse.Name = "worldFolderBrowse";
       this.worldFolderBrowse.Size = new System.Drawing.Size(28, 24);
-      this.worldFolderBrowse.TabIndex = 23;
+      this.worldFolderBrowse.TabIndex = 34;
       this.worldFolderBrowse.Text = "...";
       this.worldFolderBrowse.UseVisualStyleBackColor = true;
       this.worldFolderBrowse.Click += new System.EventHandler(this.worldFolderBrowse_Click);
@@ -293,7 +331,7 @@
       // label12
       // 
       this.label12.AutoSize = true;
-      this.label12.Location = new System.Drawing.Point(18, 386);
+      this.label12.Location = new System.Drawing.Point(18, 421);
       this.label12.Name = "label12";
       this.label12.Size = new System.Drawing.Size(67, 13);
       this.label12.TabIndex = 22;
@@ -302,7 +340,7 @@
       // modelFolderLbl
       // 
       this.modelFolderLbl.AutoEllipsis = true;
-      this.modelFolderLbl.Location = new System.Drawing.Point(108, 356);
+      this.modelFolderLbl.Location = new System.Drawing.Point(108, 391);
       this.modelFolderLbl.Name = "modelFolderLbl";
       this.modelFolderLbl.Size = new System.Drawing.Size(413, 13);
       this.modelFolderLbl.TabIndex = 21;
@@ -311,10 +349,10 @@
       // modelFolderBrowseBtn
       // 
       this.modelFolderBrowseBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-      this.modelFolderBrowseBtn.Location = new System.Drawing.Point(530, 350);
+      this.modelFolderBrowseBtn.Location = new System.Drawing.Point(530, 385);
       this.modelFolderBrowseBtn.Name = "modelFolderBrowseBtn";
       this.modelFolderBrowseBtn.Size = new System.Drawing.Size(28, 24);
-      this.modelFolderBrowseBtn.TabIndex = 20;
+      this.modelFolderBrowseBtn.TabIndex = 33;
       this.modelFolderBrowseBtn.Text = "...";
       this.modelFolderBrowseBtn.UseVisualStyleBackColor = true;
       this.modelFolderBrowseBtn.Click += new System.EventHandler(this.modelFolderBrowseBtn_Click);
@@ -322,7 +360,7 @@
       // label10
       // 
       this.label10.AutoSize = true;
-      this.label10.Location = new System.Drawing.Point(18, 356);
+      this.label10.Location = new System.Drawing.Point(18, 391);
       this.label10.Name = "label10";
       this.label10.Size = new System.Drawing.Size(68, 13);
       this.label10.TabIndex = 19;
@@ -520,7 +558,7 @@
       this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
       this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
       this.CancelButton = this.cancelBtn;
-      this.ClientSize = new System.Drawing.Size(589, 537);
+      this.ClientSize = new System.Drawing.Size(589, 578);
       this.ControlBox = false;
       this.Controls.Add(this.groupBox1);
       this.Controls.Add(this.cancelBtn);
@@ -580,5 +618,8 @@
     private System.Windows.Forms.Label label14;
     private System.Windows.Forms.Label label15;
     private System.Windows.Forms.CheckBox uiManagerOnly;
+    private System.Windows.Forms.ComboBox uiVisualStudioVersion;
+    private System.Windows.Forms.Label label16;
+    private System.Windows.Forms.ComboBox uiVisualStudioBinPath;
   }
 }

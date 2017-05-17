@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using Microsoft.Win32;
 
 namespace alice
@@ -34,6 +35,7 @@ namespace alice
       {
         RefreshProjectList();
         LoadSettingsFromRegistry();
+        CheckForVisualStudio();
       }
       catch( Exception ex )
       {
@@ -133,6 +135,33 @@ namespace alice
       catch( Exception ex )
       {
         ErrorMsg( ex.Message );
+      }
+    }
+
+    //-------------------------------------------------------------------------
+
+    private void CheckForVisualStudio()
+    {
+      int vsCount = 0;
+
+      if( Program.g_projectManager.CommonValues.ContainsKey( "ALICE_VS_DEVENV_2008" ) &&
+          File.Exists( Program.g_projectManager.CommonValues[ "ALICE_VS_DEVENV_2008" ].Replace( "\"", "" ) ) )
+      {
+        vsCount++;
+      }
+
+      if( Program.g_projectManager.CommonValues.ContainsKey( "ALICE_VS_DEVENV_2015" ) &&
+          File.Exists( Program.g_projectManager.CommonValues[ "ALICE_VS_DEVENV_2015" ].Replace( "\"", "" ) ) )
+      {
+        vsCount++;
+      }
+
+      if( vsCount == 0 )
+      {
+        ErrorMsg(
+          "VisualStudio not found - please go to [Settings] > [Global Common Values] " +
+          "and update the settings 'ALICE_VS_DEVENV_XXXX' and 'ALICE_VS_BIN_XXXX' " +
+          "(where XXXX is the version year)." );
       }
     }
 
