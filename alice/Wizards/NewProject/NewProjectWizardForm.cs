@@ -60,6 +60,8 @@ namespace alice
         worldFolderLbl.Text = "";
         specLbl.Text = "";
         worldSpecLbl.Text = "";
+
+        uiManagerOnly.Checked = true;
       }
       catch( Exception ex )
       {
