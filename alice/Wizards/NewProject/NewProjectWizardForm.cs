@@ -1108,6 +1108,23 @@ namespace alice
         {
           ErrorMsg( "Failed to find corresponding VisualStudio bin path." );
         }
+
+        // Check if devenv file exists.
+        if( Program.g_projectManager.CommonValues.ContainsKey( uiVisualStudioVersion.Text ) )
+        {
+          string filename =
+            Program.g_projectManager.CommonValues[ uiVisualStudioVersion.Text ];
+
+          filename = filename.Replace( "\"", "" );
+
+          if( File.Exists( filename ) == false )
+          {
+            ErrorMsg(
+              string.Format(
+                "VisualStudio devenv not found at '{0}'.",
+                filename ) );
+          }
+        }
       }
       catch( Exception ex )
       {
