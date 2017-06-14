@@ -12,6 +12,8 @@ namespace alice
     //-------------------------------------------------------------------------
 
     private bool m_showArchivedProjects = false;
+    private bool m_stayOnTop;
+    System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
 
     //-------------------------------------------------------------------------
 
@@ -25,6 +27,10 @@ namespace alice
       {
         ErrorMsg( ex.Message );
       }
+
+      this.timer.Interval = 100;
+      this.timer.Tick += this.Tick;
+      this.timer.Start();
     }
 
     //-------------------------------------------------------------------------
@@ -100,6 +106,11 @@ namespace alice
             }
           }
         }
+
+        // stay on top
+        m_stayOnTop = Convert.ToBoolean( key.GetValue( "stayOnTop", false ) );
+        stayOnTopToolStripMenuItem.Checked = m_stayOnTop;
+        TopMost = m_stayOnTop;
       }
       catch( Exception ex )
       {
@@ -131,6 +142,9 @@ namespace alice
         {
           key.SetValue( "activeProject", prj.Name, RegistryValueKind.String );
         }
+
+        // stay on top
+        key.SetValue( "stayOnTop", m_stayOnTop );
       }
       catch( Exception ex )
       {
@@ -1119,6 +1133,38 @@ namespace alice
       ScheduledTasks dlg = new ScheduledTasks();
       dlg.ShowDialog( this );
       dlg = null;
+    }
+
+    //-------------------------------------------------------------------------
+
+    private void stayOnTopToolStripMenuItem_Click( object sender, EventArgs e )
+    {
+      ToolStripMenuItem item = ( ToolStripMenuItem )sender;
+
+      item.Checked = !item.Checked;
+      m_stayOnTop = item.Checked;
+      stayOnTopToolStripMenuItem.Checked = m_stayOnTop;
+      TopMost = m_stayOnTop;
+    }
+
+    //-------------------------------------------------------------------------
+ 
+    private void Tick( Object source, EventArgs e )
+    {
+      if( !m_stayOnTop )
+        return;
+
+      bool mouseHoveringOnForm = false;
+      double mouseXPosInFormSpace = MousePosition.X - Location.X;
+      double mouseYPosInFormSpace = MousePosition.Y - Location.Y;
+
+      if( mouseXPosInFormSpace > 0 && mouseXPosInFormSpace < Size.Width &&
+          mouseYPosInFormSpace > 0 && mouseYPosInFormSpace < Size.Height )
+      {
+        mouseHoveringOnForm = true;
+      }
+
+      Opacity = mouseHoveringOnForm ? 0.99 : 0.5;
     }
 
     //-------------------------------------------------------------------------

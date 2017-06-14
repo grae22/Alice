@@ -56,6 +56,8 @@
       this.newContainerProjectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.scheduledTasksToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
       this.scheduledTasksToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+      this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+      this.stayOnTopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
       this.groupBox1.SuspendLayout();
       this.groupBox2.SuspendLayout();
       this.menuStrip.SuspendLayout();
@@ -291,7 +293,8 @@
       // 
       this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.settingsMenu,
-            this.toolsToolStripMenuItem});
+            this.toolsToolStripMenuItem,
+            this.viewToolStripMenuItem});
       this.menuStrip.Location = new System.Drawing.Point(0, 0);
       this.menuStrip.Name = "menuStrip";
       this.menuStrip.Size = new System.Drawing.Size(648, 24);
@@ -350,6 +353,21 @@
       this.scheduledTasksToolStripMenuItem1.Size = new System.Drawing.Size(193, 22);
       this.scheduledTasksToolStripMenuItem1.Text = "Scheduled Tasks";
       this.scheduledTasksToolStripMenuItem1.Click += new System.EventHandler(this.scheduledTasksToolStripMenuItem1_Click);
+      // 
+      // viewToolStripMenuItem
+      // 
+      this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stayOnTopToolStripMenuItem});
+      this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
+      this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+      this.viewToolStripMenuItem.Text = "View";
+      // 
+      // stayOnTopToolStripMenuItem
+      // 
+      this.stayOnTopToolStripMenuItem.Name = "stayOnTopToolStripMenuItem";
+      this.stayOnTopToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+      this.stayOnTopToolStripMenuItem.Text = "Stay On Top";
+      this.stayOnTopToolStripMenuItem.Click += new System.EventHandler(this.stayOnTopToolStripMenuItem_Click);
       // 
       // mainForm
       // 
@@ -411,6 +429,8 @@
     private System.Windows.Forms.ToolStripMenuItem newContainerProjectToolStripMenuItem;
     private System.Windows.Forms.ToolStripSeparator scheduledTasksToolStripMenuItem;
     private System.Windows.Forms.ToolStripMenuItem scheduledTasksToolStripMenuItem1;
+    private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
+    private System.Windows.Forms.ToolStripMenuItem stayOnTopToolStripMenuItem;
   }
 }
 
