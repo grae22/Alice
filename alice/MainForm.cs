@@ -13,7 +13,7 @@ namespace alice
 
     private bool m_showArchivedProjects = false;
     private bool m_stayOnTop;
-    System.Windows.Forms.Timer timer = new System.Windows.Forms.Timer();
+    Timer checkForFocusTimer = new Timer();
 
     //-------------------------------------------------------------------------
 
@@ -28,9 +28,9 @@ namespace alice
         ErrorMsg( ex.Message );
       }
 
-      this.timer.Interval = 100;
-      this.timer.Tick += this.Tick;
-      this.timer.Start();
+      this.checkForFocusTimer.Interval = 100;
+      this.checkForFocusTimer.Tick += this.Tick;
+      this.checkForFocusTimer.Start();
     }
 
     //-------------------------------------------------------------------------
