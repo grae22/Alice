@@ -4,3 +4,4 @@
 *.vsksln
 *\debug
 *\release
+*\obj
