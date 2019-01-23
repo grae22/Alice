@@ -170,6 +170,12 @@ namespace alice
         vsCount++;
       }
 
+      if( Program.g_projectManager.CommonValues.ContainsKey( "ALICE_VS_DEVENV_2017" ) &&
+          File.Exists( Program.g_projectManager.CommonValues[ "ALICE_VS_DEVENV_2017" ].Replace( "\"", "" ) ) )
+      {
+        vsCount++;
+      }
+
       if( vsCount == 0 )
       {
         ErrorMsg(
