@@ -34,13 +34,6 @@ namespace alice
 
     //-------------------------------------------------------------------------
 
-    ~ProjectManager()
-    {
-
-    }
-
-    //-------------------------------------------------------------------------
-
     private void LoadProjectFolderFromFile( string projectFolderFilename )
     {
       // Default to app path.
@@ -111,25 +104,22 @@ namespace alice
       m_hardcodedCommonValues.Add( "ALICE_APP_PATH" );
 
       m_commonValues.Add( "ALICE_APP_PATH", Program.g_path );
-      m_commonValues.Add( "ALICE_SERVER", System.Environment.MachineName );
+      m_commonValues.Add( "ALICE_SERVER", Environment.MachineName );
 
-      // is there a local settings file?
-      string fullSettingsFilename;
+      // load settings files - load local first so it's values have precedence.
+      LoadSettingsFromFile( Program.g_path + "\\" + c_localSettingsFilename );
+      LoadSettingsFromFile( Program.g_path + "\\" + c_settingsFilename );
+    }
 
-      if( File.Exists( Program.g_path + "\\" + c_localSettingsFilename ) )
-      {
-        fullSettingsFilename = Program.g_path + "\\" + c_localSettingsFilename;
-      }
-      else
-      {
-        fullSettingsFilename = Program.g_path + "\\" + c_settingsFilename;
-      }
+    //-------------------------------------------------------------------------
 
+    private void LoadSettingsFromFile( string filename )
+    {
       // load from settings file
-      if( File.Exists( fullSettingsFilename ) )
+      if( File.Exists( filename ) )
       {
         XmlDocument xmlDoc = new XmlDocument();
-        xmlDoc.Load( fullSettingsFilename );
+        xmlDoc.Load( filename );
 
         XmlNodeList commonValuesNode =
           xmlDoc.GetElementsByTagName( "CommonValues" );

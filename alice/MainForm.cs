@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using Microsoft.Win32;
 
 namespace alice
@@ -11,6 +12,8 @@ namespace alice
     //-------------------------------------------------------------------------
 
     private bool m_showArchivedProjects = false;
+    private bool m_stayOnTop;
+    Timer checkForFocusTimer = new Timer();
 
     //-------------------------------------------------------------------------
 
@@ -24,6 +27,10 @@ namespace alice
       {
         ErrorMsg( ex.Message );
       }
+
+      this.checkForFocusTimer.Interval = 100;
+      this.checkForFocusTimer.Tick += this.Tick;
+      this.checkForFocusTimer.Start();
     }
 
     //-------------------------------------------------------------------------
@@ -34,6 +41,7 @@ namespace alice
       {
         RefreshProjectList();
         LoadSettingsFromRegistry();
+        CheckForVisualStudio();
       }
       catch( Exception ex )
       {
@@ -98,6 +106,11 @@ namespace alice
             }
           }
         }
+
+        // stay on top
+        m_stayOnTop = Convert.ToBoolean( key.GetValue( "stayOnTop", false ) );
+        stayOnTopToolStripMenuItem.Checked = m_stayOnTop;
+        TopMost = m_stayOnTop;
       }
       catch( Exception ex )
       {
@@ -129,10 +142,40 @@ namespace alice
         {
           key.SetValue( "activeProject", prj.Name, RegistryValueKind.String );
         }
+
+        // stay on top
+        key.SetValue( "stayOnTop", m_stayOnTop );
       }
       catch( Exception ex )
       {
         ErrorMsg( ex.Message );
+      }
+    }
+
+    //-------------------------------------------------------------------------
+
+    private void CheckForVisualStudio()
+    {
+      int vsCount = 0;
+
+      if( Program.g_projectManager.CommonValues.ContainsKey( "ALICE_VS_DEVENV_2008" ) &&
+          File.Exists( Program.g_projectManager.CommonValues[ "ALICE_VS_DEVENV_2008" ].Replace( "\"", "" ) ) )
+      {
+        vsCount++;
+      }
+
+      if( Program.g_projectManager.CommonValues.ContainsKey( "ALICE_VS_DEVENV_2015" ) &&
+          File.Exists( Program.g_projectManager.CommonValues[ "ALICE_VS_DEVENV_2015" ].Replace( "\"", "" ) ) )
+      {
+        vsCount++;
+      }
+
+      if( vsCount == 0 )
+      {
+        ErrorMsg(
+          "VisualStudio not found - please go to [Settings] > [Global Common Values] " +
+          "and update the settings 'ALICE_VS_DEVENV_XXXX' and 'ALICE_VS_BIN_XXXX' " +
+          "(where XXXX is the version year)." );
       }
     }
 
@@ -1090,6 +1133,38 @@ namespace alice
       ScheduledTasks dlg = new ScheduledTasks();
       dlg.ShowDialog( this );
       dlg = null;
+    }
+
+    //-------------------------------------------------------------------------
+
+    private void stayOnTopToolStripMenuItem_Click( object sender, EventArgs e )
+    {
+      ToolStripMenuItem item = ( ToolStripMenuItem )sender;
+
+      item.Checked = !item.Checked;
+      m_stayOnTop = item.Checked;
+      stayOnTopToolStripMenuItem.Checked = m_stayOnTop;
+      TopMost = m_stayOnTop;
+    }
+
+    //-------------------------------------------------------------------------
+ 
+    private void Tick( Object source, EventArgs e )
+    {
+      if( !m_stayOnTop )
+        return;
+
+      bool mouseHoveringOnForm = false;
+      double mouseXPosInFormSpace = MousePosition.X - Location.X;
+      double mouseYPosInFormSpace = MousePosition.Y - Location.Y;
+
+      if( mouseXPosInFormSpace > 0 && mouseXPosInFormSpace < Size.Width &&
+          mouseYPosInFormSpace > 0 && mouseYPosInFormSpace < Size.Height )
+      {
+        mouseHoveringOnForm = true;
+      }
+
+      Opacity = mouseHoveringOnForm ? 0.99 : 0.5;
     }
 
     //-------------------------------------------------------------------------

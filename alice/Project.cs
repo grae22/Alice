@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Linq;
 using System.IO;
 using System.Collections.Generic;
 
@@ -107,6 +107,29 @@ namespace alice
 
     public string GetCommonValue( string value, bool simpleCompare )
     {
+      // Check local settings first.
+      IEnumerable<KeyValuePair<string, string>> results =
+        CommonValues.Where(
+          x => x.Key.ToUpper() == value.ToUpper() );
+
+      if( results.Count() > 0 )
+      {
+        return results.First().Value;
+      }
+
+      // Check the globals.
+      results =
+        Program.g_projectManager.CommonValues.Where(
+          x => x.Key.ToUpper() == value.ToUpper() );
+
+      if( results.Count() > 0 )
+      {
+        return results.First().Value;
+      }
+
+      // The following is legacy, but is probably partially used when
+      // 'simple compares' aren't desired.
+
       // try this project
       foreach( string commonKey in CommonValues.Keys )
       {

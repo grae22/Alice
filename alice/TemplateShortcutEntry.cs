@@ -158,11 +158,14 @@ namespace alice
       //-- Run the process.
       if( m_filename != "" )
       {
-        bool isExecutable = ( m_filename.Contains( ".exe" ) ||
-                              m_filename.Contains( ".bat" ) );
+        string resolvedFilename = project.GetCommonValue( m_filename, false );
+        resolvedFilename = resolvedFilename.Replace( "\"", "" );
+
+        bool isExecutable = ( resolvedFilename.Contains( ".exe" ) ||
+                              resolvedFilename.Contains( ".bat" ) );
 
         ProcessStartInfo info = new ProcessStartInfo();
-        info.FileName = project.GetCommonValue( m_filename, false );
+        info.FileName = resolvedFilename;
         info.Arguments = GetArgumentString( m_args, m_argStates, project );
         info.UseShellExecute = !isExecutable;
         info.WorkingDirectory = Path.GetDirectoryName( info.FileName );
@@ -174,6 +177,11 @@ namespace alice
 
         foreach( string key in m_environmentVars.Keys )
         {
+          if( EnvironmentVarStates[ key ] == false )
+          {
+            continue;
+          }
+
           string value;
           if( m_environmentVars.TryGetValue( key, out value ) )
           {
